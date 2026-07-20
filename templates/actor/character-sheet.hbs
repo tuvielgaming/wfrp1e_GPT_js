@@ -1,0 +1,111 @@
+<div class="wfrp-sheet">
+
+	<section class="header">
+		<h1>{{actor.name}}</h1>
+		<div class="profile">
+			<label>Race</label>
+			<input value="{{system.profile.race}}" />
+			<label>Career</label>
+			<input value="{{system.profile.career}}" />
+		</div>
+	</section>
+
+    <section class="career">
+        <h2>Career</h2>
+            {{#if career}}
+            <h3>{{career.name}}</h3>
+            {{else}}
+            <p>No career selected</p>
+            {{/if}}
+    </section>
+
+	<section class="characteristics">
+		<h2>Characteristics</h2>
+		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th>Base</th>
+                    <th>Max</th>
+					<th>Advance</th>
+					<th>Now</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each characteristics}}
+					<tr>
+						<td>{{label}}</td>
+						<td>
+                            <input
+                                class="characteristic-input"
+                                type="number"
+                                value="{{base}}"
+                                data-path="system.characteristics.{{key}}.base"
+                            />
+                        </td>
+						<td>{{max}}</td>
+						<td class="advance-boxes">
+                            {{#each boxes}}
+                                <span class="advance-box{{#if this}}checked{{/if}}"
+                                    data-characteristic="{{../key}}"
+                                    data-index="{{@index}}"
+                                    data-bought="{{this}}"
+                                ></span>
+                            {{/each}}
+                        </td>
+                        <td>{{current}}</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</section>
+
+	<section class="combat">
+		<h2>Combat</h2>
+		<div class="combat-grid">
+			<div>Wounds
+				<strong>
+					{{system.derived.combat.wounds.current}}
+					/
+					{{system.derived.combat.wounds.maximum}}
+				</strong>
+			</div>
+
+			<div>Attacks
+				<strong>
+					{{system.derived.combat.attacks.available}}
+					/
+					{{system.derived.combat.attacks.maximum}}
+				</strong>
+			</div>
+		</div>
+	</section>
+
+	<section class="skills">
+		<h2>Skills</h2>
+		{{#each system.derived.skills}}
+			<div class="skill-row">
+				<span>{{name}}</span>
+			</div>
+		{{/each}}
+	</section>
+
+    <section class="career-skills">
+        <h2>Career Skills</h2>
+        {{#each careerSkills}}
+            <div class="career-skill {{#unless owned}} not-owned {{/unless}}" data-skill="{{uuid}}">
+                <span>{{name}}</span>
+                {{#if owned}}
+                    {{#if (gt maxAdvances 1)}}
+                        <span class="skill-boxes">
+                            {{#times maxAdvances}}
+                                <span class="advance-box {{#if (lt @index ../boughtAdvances)}} checked {{/if}} "></span>
+                            {{/times}}
+                        </span>
+                    {{/if}}
+                {{/if}}
+            </div>
+        {{/each}}
+    </section>
+
+</div>

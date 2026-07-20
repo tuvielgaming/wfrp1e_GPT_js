@@ -1,0 +1,38 @@
+{
+    "id": "wfrp1e",
+    "title": "Warhammer Fantasy Roleplay 1st Edition",
+    "description": "A WFRP 1e implementation for Foundry Virtual Tabletop.",
+    "version": "0.1.0",
+    "compatibility": {
+        "minimum": "14",
+        "verified": "14"
+    },
+    "authors": [
+        {
+            "name": "WFRP1e Community"
+        }
+    ],
+    "esmodules": [
+        "scripts/wfrp1e.mjs"
+    ],
+    "styles": [
+        "styles/wfrp1e.css"
+    ],
+    "documentTypes": {
+        "Actor": {
+            "character": {}
+        },
+        "Item": {
+            "skill": {},
+            "career": {},
+            "talent": {},
+            "spell": {},
+            "mutation": {},
+            "disease": {},
+            "criticalWound": {},
+            "weapon": {},
+            "armour": {},
+            "trapping": {}
+        }
+    }
+}

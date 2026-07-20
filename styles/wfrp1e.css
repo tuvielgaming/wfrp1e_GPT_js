@@ -1,0 +1,89 @@
+.wfrp-sheet {
+	font-family: "Book Antiqua", serif;
+	background: #f2ead8;
+	color: #221b14;
+	padding: 20px;
+}
+
+.wfrp-sheet h1,
+.wfrp-sheet h2 {
+	font-family: "Cinzel", serif;
+	border-bottom: 2px solid #4a3726;
+}
+
+.profile {
+	display: grid;
+	grid-template-columns: 100px 1fr 100px 1fr;
+	gap: 5px;
+}
+
+.characteristics table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.characteristics th,
+.characteristics td {
+	border: 1px solid #5b4632;
+	text-align: center;
+	padding: 5px;
+}
+
+.characteristics th {
+	background: #d8c7a3;
+}
+
+.combat-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+}
+
+.combat-grid div {
+	border: 2px solid #5b4632;
+	padding: 10px;
+	text-align: center;
+}
+
+.skill-row {
+	border-bottom: 1px dotted #6b5842;
+	padding: 4px;
+}
+
+.advance-boxes {
+	white-space: nowrap;
+}
+
+.advance-box {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border: 1px solid #3d2b1f;
+	margin: 1px;
+}
+
+.advance-box.checked {
+	background: #3d2b1f;
+}
+
+.characteristic-input {
+	width: 45px;
+	text-align: center;
+	background: transparent;
+	border: none;
+	font-weight: bold;
+}
+
+.characteristic-input:hover {
+	background: #ead9b5;
+}
+
+.advance-box:not(.checked):hover {
+    background:#c9ad7c;
+    cursor:pointer;
+}
+
+.career-skill.not-owned {
+    color:#888;
+    font-style:italic;
+}
