@@ -1,7 +1,6 @@
 import { calculateCharacteristic } from "../helpers/calculations.mjs";
 
 export class WFRPActor extends Actor {
-    
 	prepareDerivedData() {
 		super.prepareDerivedData();
 
@@ -50,6 +49,87 @@ export class WFRPActor extends Actor {
 		if (!career) return {};
 
 		return career.system.careerAdvances;
+	}
+
+	/**
+	 * Returns a characteristic definition.
+	 *
+	 * @param {string} id
+	 * @returns {object|null}
+	 */
+	getCharacteristic(id) {
+		return this.system.characteristics?.[id] ?? null;
+	}
+
+	/**
+	 * Returns the derived value of a characteristic.
+	 *
+	 * @param {string} id
+	 * @returns {number}
+	 */
+	getCharacteristicValue(id) {
+		return Number(this.system.derived?.characteristics?.[id]?.current ?? 0);
+	}
+
+	/**
+	 * Returns the base value of a characteristic.
+	 *
+	 * @param {string} id
+	 * @returns {number}
+	 */
+	getCharacteristicBase(id) {
+		return Number(this.system.characteristics?.[id]?.base ?? 0);
+	}
+
+	/**
+	 * Returns the advancement value.
+	 *
+	 * @param {string} id
+	 * @returns {number}
+	 */
+	getCharacteristicAdvances(id) {
+		return Number(this.system.characteristics?.[id]?.boughtAdvances ?? 0);
+	}
+
+	/**
+	 * Returns a skill owned by this actor.
+	 *
+	 * @param {string} id
+	 * @returns {Item|null}
+	 */
+	getSkill(id) {
+		return (
+			this.items.find(
+				(item) => item.type === "skill" && (item.id === id || item.name === id),
+			) ?? null
+		);
+	}
+
+	/**
+	 * Returns current wounds.
+	 *
+	 * @returns {number}
+	 */
+	getCurrentWounds() {
+		return Number(this.system.derived?.combat?.wounds?.current ?? 0);
+	}
+
+	/**
+	 * Returns maximum wounds.
+	 *
+	 * @returns {number}
+	 */
+	getMaximumWounds() {
+		return Number(this.system.derived?.combat?.wounds?.maximum ?? 0);
+	}
+
+	/**
+	 * Returns true if the actor is alive.
+	 *
+	 * @returns {boolean}
+	 */
+	isAlive() {
+		return this.getCurrentWounds() > 0;
 	}
 
 	prepareCombat() {
