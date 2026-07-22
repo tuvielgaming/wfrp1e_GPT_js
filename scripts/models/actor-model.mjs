@@ -1,66 +1,116 @@
-import { characteristicField } from "./fields.mjs";
+import {
+	characteristicField,
+	resourceField,
+	moneyField,
+	integerField,
+	textField
+} from "./fields.mjs";
 
 const fields = foundry.data.fields;
 
 export class WFRPCharacterModel extends foundry.abstract.TypeDataModel {
 	static defineSchema() {
 		return {
+			/*
+			 * Character identity
+			 */
 			profile: new fields.SchemaField({
-				race: new fields.StringField({
-					initial: "",
-				}),
+				name: textField(),
+				race: textField(),
+				career: textField(),
 
-				career: new fields.StringField({
-					initial: "",
-				}),
+				sex: textField(),
+				age: integerField(),
+
+				height: textField(),
+				weight: textField(),
+
+				hair: textField(),
+				eyes: textField(),
+
+				birthplace: textField(),
+				starsign: textField(),
+				alignment: textField(),
 			}),
 
+			/*
+			 * Primary characteristics
+			 */
 			characteristics: new fields.SchemaField({
 				ws: characteristicField(),
 				bs: characteristicField(),
-
 				s: characteristicField(),
 				t: characteristicField(),
-
 				w: characteristicField(),
+				i: characteristicField(),
 				a: characteristicField(),
-
-				ag: characteristicField(),
-
+				dex: characteristicField(),
+				ld: characteristicField(),
 				int: characteristicField(),
-
+				cl: characteristicField(),
 				wp: characteristicField(),
-
 				fel: characteristicField(),
 			}),
 
-			combat: new fields.SchemaField({
-				wounds: new fields.SchemaField({
-					current: new fields.NumberField({
-						initial: 0,
-					}),
+			/*
+			 * Resources
+			 */
+			resources: new fields.SchemaField({
+				wounds: resourceField(),
 
-					modifier: new fields.NumberField({
-						initial: 0,
-					}),
+				fate: resourceField(),
+
+				fortune: resourceField(),
+
+				movement: resourceField(4),
+
+				experience: new fields.SchemaField({
+					current: integerField(),
+					spent: integerField(),
 				}),
 
-				attacks: new fields.SchemaField({
-					available: new fields.NumberField({
-						initial: 0,
-					}),
-				}),
+				money: moneyField(),
 			}),
 
-            career: new fields.SchemaField({
-                sourceId: new fields.StringField({
-                        initial:""
-                    }),
+			/*
+			 * Combat
+			 */
+			combat: new fields.SchemaField({
+				damageBonus: integerField(),
 
-                name: new fields.StringField({
-                        initial:""
-                    })
-            })
+				attacks: integerField(1, 0),
+
+				initiativeModifier: integerField(),
+
+				armourPoints: integerField(),
+			}),
+
+			/*
+			 * Psychology
+			 */
+			psychology: new fields.SchemaField({
+				insanityPoints: integerField(),
+
+				corruptionPoints: integerField(),
+			}),
+
+			/*
+			 * Current career reference
+			 */
+			career: new fields.SchemaField({
+				sourceId: textField(),
+				name: textField(),
+			}),
+
+			/*
+			 * Biography
+			 */
+			biography: new fields.SchemaField({
+				description: textField(),
+				appearance: textField(),
+				background: textField(),
+				notes: textField(),
+			}),
 		};
 	}
 }

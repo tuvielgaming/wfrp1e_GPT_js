@@ -1,25 +1,37 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	flagField,
+	integerField,
+	qualitiesField,
+	flawsField,
+	specialRulesField,
+} from "./fields.mjs";
 
 export class EquipmentModel extends WFRPItemModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Durability
+			 */
+			durability: integerField(),
 
-			{
-				encumbrance: new fields.NumberField({
-					initial: 0,
-				}),
+			maxDurability: integerField(),
 
-				weight: new fields.NumberField({
-					initial: 0,
-				}),
+			/*
+			 * Equipment state
+			 */
+			damaged: flagField(false),
 
-				equipped: new fields.BooleanField({
-					initial: false,
-				}),
-			},
-		);
+			broken: flagField(false),
+
+			/*
+			 * Rules
+			 */
+			qualities: qualitiesField(),
+
+			flaws: flawsField(),
+
+			specialRules: specialRulesField(),
+		});
 	}
 }

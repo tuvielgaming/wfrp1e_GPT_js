@@ -3,37 +3,49 @@
  * WFRP1e Foundry VTT System
  * Roll Request Model
  * ----------------------------------------------------------------------------
- * Represents a request to perform a roll.
+ * Immutable description of WHAT should be rolled.
  *
- * This model contains NO game logic.
- * It simply describes WHAT should be rolled.
- *
- * The RollService is responsible for executing the request.
+ * This class contains no game logic.
+ * It is consumed by RollService / RollEngine.
  * ============================================================================
  */
 
 export class RollRequest {
 	/**
-	 * Creates a new RollRequest.
-	 *
 	 * @param {object} options
 	 */
 	constructor(options = {}) {
 		/**
-		 * Actor performing the test.
+		 * Actor performing the roll.
+		 *
 		 * @type {Actor|null}
 		 */
 		this.actor = options.actor ?? null;
 
 		/**
-		 * Roll category.
+		 * Source item.
 		 *
-		 * Examples:
+		 * Weapon
+		 * Skill
+		 * Spell
+		 * Talent
+		 *
+		 * @type {Item|null}
+		 */
+		this.item = options.item ?? null;
+
+		/**
+		 * Roll type.
+		 *
 		 * characteristic
 		 * skill
 		 * combat
 		 * spell
 		 * initiative
+		 * damage
+		 * fear
+		 * terror
+		 * etc.
 		 *
 		 * @type {string}
 		 */
@@ -42,21 +54,33 @@ export class RollRequest {
 		/**
 		 * Characteristic key.
 		 *
-		 * Examples:
 		 * ws
 		 * bs
 		 * s
 		 * t
-		 * ag
+		 * w
+		 * i
+		 * a
+		 * dex
+		 * ld
+		 * int
+		 * cl
+		 * wp
+		 * fel
 		 *
 		 * @type {string|null}
 		 */
 		this.characteristic = options.characteristic ?? null;
 
 		/**
-		 * Base target before modifiers.
+		 * Optional skill identifier.
 		 *
-		 * Calculated by the calling test.
+		 * @type {string|null}
+		 */
+		this.skillId = options.skillId ?? null;
+
+		/**
+		 * Base target before modifiers.
 		 *
 		 * @type {number}
 		 */
@@ -65,42 +89,56 @@ export class RollRequest {
 		/**
 		 * Difficulty identifier.
 		 *
-		 * Example:
-		 * veryEasy
-		 * easy
-		 * average
-		 * hard
-		 * veryHard
-		 *
 		 * @type {string}
 		 */
 		this.difficulty = options.difficulty ?? "average";
 
 		/**
-		 * Collection of modifiers.
+		 * Roll modifiers.
 		 *
-		 * ModifierService will evaluate them.
-		 *
-		 * @type {Array}
+		 * @type {ModifierModel[]}
 		 */
-		this.modifiers = Array.isArray(options.modifiers) ? options.modifiers : [];
+		this.modifiers = Array.isArray(options.modifiers)
+			? [...options.modifiers]
+			: [];
 
 		/**
-		 * Human readable label.
+		 * Human-readable label.
 		 *
 		 * @type {string}
 		 */
 		this.label = options.label ?? "";
 
 		/**
-		 * Additional contextual data.
+		 * Whether this is an opposed roll.
 		 *
-		 * Allows future systems to attach
-		 * arbitrary information without
-		 * changing the model.
+		 * @type {boolean}
+		 */
+		this.opposed = Boolean(options.opposed);
+
+		/**
+		 * Whether success levels should be calculated.
+		 *
+		 * @type {boolean}
+		 */
+		this.calculateSL = options.calculateSL ?? true;
+
+		/**
+		 * Whether automatic success/failure applies.
+		 *
+		 * @type {boolean}
+		 */
+		this.autoSuccessFailure = options.autoSuccessFailure ?? true;
+
+		/**
+		 * Arbitrary runtime context.
 		 *
 		 * @type {object}
 		 */
-		this.context = options.context ?? null;
+		this.context = foundry.utils.deepClone(options.context ?? {});
+
+		Object.freeze(this.modifiers);
+		Object.freeze(this.context);
+		Object.freeze(this);
 	}
 }

@@ -1,168 +1,91 @@
-import { calculateCharacteristic } from "../helpers/calculations.mjs";
+import { CharacteristicService } from "../services/characteristic-service.mjs";
+import { CombatService } from "../services/combat-service.mjs";
+import { SkillService } from "../services/skill-service.mjs";
 
 export class WFRPActor extends Actor {
+	/* -------------------------------------------------------------------------
+	 * Lifecycle
+	 * ---------------------------------------------------------------------- */
+
+	prepareBaseData() {
+		super.prepareBaseData();
+	}
+
+	prepareEmbeddedDocuments() {
+		super.prepareEmbeddedDocuments();
+	}
+
 	prepareDerivedData() {
 		super.prepareDerivedData();
 
-		if (this.type !== "character") return;
-
-		this.prepareCharacteristics();
-
-		this.prepareCombat();
-
-		this.prepareSkills();
-	}
-
-	prepareCharacteristics() {
-		const characteristics = this.system.characteristics;
-
-		const derived = {};
-
-		for (const [key, value] of Object.entries(characteristics)) {
-			derived[key] = {
-				base: value.base,
-
-				advance: this.getAdvanceDisplay(key, value.boughtAdvances),
-
-				current: calculateCharacteristic(key, value),
-			};
+		if (this.type !== "character") {
+			return;
 		}
 
-		this.system.derived = this.system.derived ?? {};
+		this.system.derived ??= {};
 
-		this.system.derived.characteristics = derived;
+		CharacteristicService.prepare(this);
+		CombatService.prepare(this);
+		SkillService.prepare(this);
 	}
 
-	getAdvanceDisplay(key, advances) {
-		if (advances <= 0) return "";
+	/* -------------------------------------------------------------------------
+	 * Type Helpers
+	 * ---------------------------------------------------------------------- */
 
-		const smallAdvance = ["ws", "bs", "s", "t", "w", "a"];
-
-		const value = smallAdvance.includes(key) ? advances : advances * 10;
-
-		return `+${value}`;
+	get isCharacter() {
+		return this.type === "character";
 	}
 
-	async getCareerAdvances() {
-		const career = this.items.find((i) => i.type === "career");
-
-		if (!career) return {};
-
-		return career.system.careerAdvances;
+	get isNpc() {
+		return this.type === "npc";
 	}
 
-	/**
-	 * Returns a characteristic definition.
-	 *
-	 * @param {string} id
-	 * @returns {object|null}
-	 */
+	/* -------------------------------------------------------------------------
+	 * Characteristic Helpers
+	 * ---------------------------------------------------------------------- */
+
 	getCharacteristic(id) {
-		return this.system.characteristics?.[id] ?? null;
+		return this.system.derived?.characteristics?.[id] ?? null;
 	}
 
-	/**
-	 * Returns the derived value of a characteristic.
-	 *
-	 * @param {string} id
-	 * @returns {number}
-	 */
 	getCharacteristicValue(id) {
-		return Number(this.system.derived?.characteristics?.[id]?.current ?? 0);
+		return this.getCharacteristic(id)?.current ?? 0;
 	}
 
-	/**
-	 * Returns the base value of a characteristic.
-	 *
-	 * @param {string} id
-	 * @returns {number}
-	 */
-	getCharacteristicBase(id) {
-		return Number(this.system.characteristics?.[id]?.base ?? 0);
-	}
+	/* -------------------------------------------------------------------------
+	 * Combat Helpers
+	 * ---------------------------------------------------------------------- */
 
-	/**
-	 * Returns the advancement value.
-	 *
-	 * @param {string} id
-	 * @returns {number}
-	 */
-	getCharacteristicAdvances(id) {
-		return Number(this.system.characteristics?.[id]?.boughtAdvances ?? 0);
-	}
-
-	/**
-	 * Returns a skill owned by this actor.
-	 *
-	 * @param {string} id
-	 * @returns {Item|null}
-	 */
-	getSkill(id) {
-		return (
-			this.items.find(
-				(item) => item.type === "skill" && (item.id === id || item.name === id),
-			) ?? null
-		);
-	}
-
-	/**
-	 * Returns current wounds.
-	 *
-	 * @returns {number}
-	 */
 	getCurrentWounds() {
-		return Number(this.system.derived?.combat?.wounds?.current ?? 0);
+		return CombatService.getCurrentWounds(this);
 	}
 
-	/**
-	 * Returns maximum wounds.
-	 *
-	 * @returns {number}
-	 */
 	getMaximumWounds() {
-		return Number(this.system.derived?.combat?.wounds?.maximum ?? 0);
+		return CombatService.getMaximumWounds(this);
 	}
 
-	/**
-	 * Returns true if the actor is alive.
-	 *
-	 * @returns {boolean}
-	 */
+	getAvailableAttacks() {
+		return CombatService.getAvailableAttacks(this);
+	}
+
+	getMaximumAttacks() {
+		return CombatService.getMaximumAttacks(this);
+	}
+
 	isAlive() {
-		return this.getCurrentWounds() > 0;
+		return CombatService.isAlive(this);
 	}
 
-	prepareCombat() {
-		const w = this.system.derived.characteristics.w.current;
-		const attacks = this.system.derived.characteristics.a.current;
+	/* -------------------------------------------------------------------------
+	 * Skill Helpers
+	 * ---------------------------------------------------------------------- */
 
-		const modifier = this.system.combat.wounds.modifier;
-
-		this.system.derived.combat = {
-			wounds: {
-				maximum: w + modifier,
-
-				current: this.system.combat.wounds.current,
-			},
-			attacks: {
-				maximum: attacks,
-
-				available: Math.min(this.system.combat.attacks.available, attacks),
-			},
-		};
+	getSkills() {
+		return SkillService.getSkills(this);
 	}
 
-	prepareSkills() {
-		const owned = this.items.filter((i) => i.type === "skill");
-
-		this.system.derived.skills = owned.map((skill) => {
-			return {
-				id: skill.id,
-
-				name: skill.name,
-
-				boughtAdvances: skill.system.boughtAdvances,
-			};
-		});
+	getSkill(identifier) {
+		return SkillService.getSkill(this, identifier);
 	}
 }

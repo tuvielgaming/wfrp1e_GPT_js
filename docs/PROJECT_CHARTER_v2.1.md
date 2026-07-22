@@ -88,3 +88,110 @@ RS-004 / M2A
 ## Version History
 ### 2.1
 Repository-aware workflow formalized and architecture updated.
+
+---
+
+# ChatGPT Session Workflow (Authoritative)
+
+This section defines the mandatory workflow for ChatGPT during development sessions. Unless the user explicitly requests otherwise, this workflow must always be followed.
+
+## Development Process
+
+1. Work on **exactly one source file per response**.
+
+2. Deliver the **complete contents of the file**, never partial snippets or diffs.
+
+3. Before the code, always state:
+   - File path.
+   - Whether this is a complete replacement or a new file.
+   - Any other files that require changes because of this file.
+
+4. If another file requires modification:
+   - Explain exactly what needs to be changed.
+   - Do **not** implement those changes until their turn arrives.
+
+5. After delivering the file:
+   - Stop.
+   - Wait for the user to reply **"next"**.
+
+6. Never continue automatically to the next file.
+
+7. Never skip files in the implementation order.
+
+8. Never provide implementation plans when the user explicitly requested implementation.
+
+9. Every delivered file must be production-ready.
+
+10. Do not leave TODO placeholders unless explicitly requested.
+
+---
+
+## End of Session
+
+At the end of every development session the assistant must update this Charter.
+
+The update must include:
+
+### Completed Work
+
+- Files completed during the session.
+- Architectural decisions made.
+- Refactorings performed.
+- New modules introduced.
+
+### Current State
+
+- Current implementation status.
+- Remaining work.
+- Known issues.
+- Technical debt.
+
+### Next Session
+
+Exactly one recommended next file to implement.
+
+---
+
+## Repository Rules
+
+The assistant should always work with the latest uploaded repository.
+
+The uploaded repository becomes the authoritative project state for the current session.
+
+No assumptions should be made based on older repositories if newer ones have been provided.
+
+---
+
+## Coding Rules
+
+- JavaScript only.
+- ES Modules (.mjs).
+- Foundry VTT v14 APIs.
+- Use DataModel architecture.
+- No TypeScript.
+- No transpilation requirements.
+- No placeholder implementations.
+- No duplicated logic.
+- Reuse helper modules whenever possible.
+
+---
+
+## Communication Rules
+
+Unless requested otherwise:
+
+- Keep explanations short.
+- Prioritize code over discussion.
+- Deliver working implementations.
+- Ask questions only when absolutely necessary.
+- Wait for **"next"** after every completed file.
+
+---
+
+## Charter Authority
+
+This Charter is the authoritative description of the project workflow.
+
+If the workflow changes during development, the Charter must be updated before the end of the session.
+
+Future sessions should begin by following this workflow without requiring the user to repeat it.

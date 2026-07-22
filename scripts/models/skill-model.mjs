@@ -1,25 +1,59 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	textField,
+	htmlField,
+	enumField,
+	flagField,
+	integerField,
+	modifierField,
+	stringArrayField,
+} from "./fields.mjs";
 
 export class SkillModel extends WFRPItemModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Classification
+			 */
+			type: enumField(["basic", "advanced"]),
 
-			{
-				maxAdvances: new fields.NumberField({
-					initial: 1,
-				}),
+			characteristic: enumField([
+				"ws",
+				"bs",
+				"s",
+				"t",
+				"ag",
+				"int",
+				"wp",
+				"fel",
+			]),
 
-				advanceCost: new fields.NumberField({
-					initial: 100,
-				}),
+			category: textField(),
 
-				characteristic: new fields.StringField({
-					initial: "",
-				}),
-			},
-		);
+			/*
+			 * Progression
+			 */
+			advances: integerField(0, 0),
+
+			maxAdvances: integerField(0, 0),
+
+			career: textField(),
+
+			/*
+			 * Rules
+			 */
+			modifier: modifierField(),
+
+			grouped: flagField(false),
+
+			group: textField(),
+
+			specialisations: stringArrayField(),
+
+			/*
+			 * Description
+			 */
+			effect: htmlField(),
+		});
 	}
 }

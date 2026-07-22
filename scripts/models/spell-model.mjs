@@ -1,29 +1,60 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	textField,
+	htmlField,
+	enumField,
+	integerField,
+	flagField,
+	stringArrayField,
+} from "./fields.mjs";
 
 export class SpellModel extends WFRPItemModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Classification
+			 */
+			type: enumField([
+				"petty",
+				"battle",
+				"arcane",
+				"divine",
+				"druidic",
+				"chaos",
+			]),
 
-			{
-				castingNumber: new fields.NumberField({
-					initial: 0,
-				}),
+			lore: textField(),
 
-				ingredients: new fields.HTMLField({
-					initial: "",
-				}),
+			/*
+			 * Casting
+			 */
+			cn: integerField(0, 0),
 
-				range: new fields.StringField({
-					initial: "",
-				}),
+			range: textField(),
 
-				duration: new fields.StringField({
-					initial: "",
-				}),
-			},
-		);
+			duration: textField(),
+
+			target: textField(),
+
+			ingredients: textField(),
+
+			ritual: flagField(false),
+
+			/*
+			 * Requirements
+			 */
+			magicPoints: integerField(0, 0),
+
+			/*
+			 * Rules
+			 */
+			effect: htmlField(),
+
+			miscast: htmlField(),
+
+			overcast: htmlField(),
+
+			specialRules: stringArrayField(),
+		});
 	}
 }

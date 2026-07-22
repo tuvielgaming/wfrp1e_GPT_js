@@ -3,45 +3,48 @@
  * WFRP1e Foundry VTT System
  * Modifier Model
  * ----------------------------------------------------------------------------
- * Represents a single modifier applied to a roll.
+ * Immutable description of a single roll modifier.
  *
- * This class contains no calculation logic.
- * It simply describes a modifier.
+ * This class contains no business logic.
+ * It only represents modifier data consumed by the Roll Engine.
  * ============================================================================
  */
 
 export class ModifierModel {
 	/**
-	 * Creates a new modifier.
-	 *
 	 * @param {object} options
 	 */
 	constructor(options = {}) {
 		/**
-		 * Human readable name.
+		 * Unique identifier.
+		 *
+		 * @type {string}
+		 */
+		this.id = options.id ?? foundry.utils.randomID();
+
+		/**
+		 * Human readable label.
 		 *
 		 * Example:
-		 * "Charging"
-		 * "Darkness"
-		 * "Bless"
+		 * Charging
+		 * Darkness
+		 * Bless
 		 *
 		 * @type {string}
 		 */
 		this.label = options.label ?? "";
 
 		/**
-		 * Numeric modifier.
+		 * Modifier value.
 		 *
-		 * Example:
-		 * +10
-		 * -20
+		 * Positive and negative values are both allowed.
 		 *
 		 * @type {number}
 		 */
 		this.value = Number(options.value ?? 0);
 
 		/**
-		 * Source of the modifier.
+		 * Source object type.
 		 *
 		 * Example:
 		 * Talent
@@ -54,40 +57,88 @@ export class ModifierModel {
 		this.source = options.source ?? "Unknown";
 
 		/**
-		 * Category.
+		 * Category used by the Roll Engine.
 		 *
-		 * Allows grouping modifiers later.
-		 *
-		 * Examples:
+		 * Supported values:
+		 * generic
 		 * circumstance
 		 * equipment
 		 * talent
 		 * spell
 		 * effect
+		 * injury
+		 * disease
+		 * mutation
+		 * difficulty
+		 * user
 		 *
 		 * @type {string}
 		 */
 		this.category = options.category ?? "generic";
 
 		/**
-		 * Whether this modifier is enabled.
+		 * Display priority.
+		 *
+		 * Lower values appear first.
+		 *
+		 * @type {number}
+		 */
+		this.priority = Number(options.priority ?? 100);
+
+		/**
+		 * Whether this modifier is currently enabled.
 		 *
 		 * @type {boolean}
 		 */
 		this.enabled = options.enabled ?? true;
 
 		/**
-		 * Whether identical modifiers can stack.
+		 * Whether identical modifiers may stack.
 		 *
 		 * @type {boolean}
 		 */
 		this.stackable = options.stackable ?? true;
 
 		/**
-		 * Additional custom data.
+		 * Whether this modifier is hidden from players.
+		 *
+		 * Useful for GM-only modifiers.
+		 *
+		 * @type {boolean}
+		 */
+		this.hidden = options.hidden ?? false;
+
+		/**
+		 * Whether the modifier is temporary.
+		 *
+		 * Temporary modifiers are typically removed after the roll.
+		 *
+		 * @type {boolean}
+		 */
+		this.temporary = options.temporary ?? false;
+
+		/**
+		 * Optional expiry information.
+		 *
+		 * Example:
+		 * endOfTurn
+		 * startOfRound
+		 * duration
+		 *
+		 * @type {string|null}
+		 */
+		this.expires = options.expires ?? null;
+
+		/**
+		 * Optional arbitrary metadata.
+		 *
+		 * Used by specialised roll handlers.
 		 *
 		 * @type {object}
 		 */
-		this.context = options.context ?? {};
+		this.context = foundry.utils.deepClone(options.context ?? {});
+
+		Object.freeze(this.context);
+		Object.freeze(this);
 	}
 }

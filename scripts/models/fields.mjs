@@ -1,13 +1,48 @@
-const fields = foundry.data.fields;
+import { WFRPItemModel } from "./item-model.mjs";
+import {
+	textField,
+	htmlField,
+	enumField,
+	flagField,
+	modifierField,
+	stringArrayField,
+} from "./fields.mjs";
 
-export function characteristicField() {
-	return new fields.SchemaField({
-		base: new fields.NumberField({
-			initial: 0,
-		}),
+export class TalentModel extends WFRPItemModel {
+	static defineSchema() {
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Classification
+			 */
+			type: enumField(["racial", "career", "general", "special"]),
 
-		boughtAdvances: new fields.NumberField({
-			initial: 0,
-		}),
-	});
+			category: textField(),
+
+			/*
+			 * Advancement
+			 */
+			maxRank: modifierField(1),
+
+			stackable: flagField(false),
+
+			/*
+			 * Requirements
+			 */
+			prerequisites: stringArrayField(),
+
+			/*
+			 * Rules
+			 */
+			modifier: modifierField(),
+
+			effects: stringArrayField(),
+
+			specialRules: stringArrayField(),
+
+			/*
+			 * Description
+			 */
+			effect: htmlField(),
+		});
+	}
 }

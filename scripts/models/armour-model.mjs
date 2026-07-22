@@ -1,15 +1,53 @@
+import { EquipmentModel } from "./equipment-model.mjs";
+import {
+	textField,
+	integerField,
+	enumField,
+	bodyLocationField,
+	bodyLocationsField,
+	flagField,
+	htmlField,
+} from "./fields.mjs";
+
 export class ArmourModel extends EquipmentModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Armour classification
+			 */
+			category: enumField(["light", "medium", "heavy", "shield"]),
 
-			{
-				armourPoints: new fields.NumberField({
-					initial: 0,
-				}),
+			type: textField(),
 
-				locations: new fields.ArrayField(new fields.StringField()),
-			},
-		);
+			/*
+			 * Protection
+			 */
+			armourPoints: integerField(),
+
+			locations: bodyLocationsField(),
+
+			primaryLocation: bodyLocationField(),
+
+			/*
+			 * Shield
+			 */
+			shield: flagField(false),
+
+			parryBonus: integerField(),
+
+			/*
+			 * Restrictions
+			 */
+			movementPenalty: integerField(),
+
+			initiativePenalty: integerField(),
+
+			encumbranceModifier: integerField(),
+
+			/*
+			 * Rules
+			 */
+			effect: htmlField(),
+		});
 	}
 }

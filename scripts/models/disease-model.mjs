@@ -1,27 +1,60 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	textField,
+	htmlField,
+	enumField,
+	flagField,
+	stringArrayField,
+	referenceField,
+} from "./fields.mjs";
 
 export class DiseaseModel extends WFRPItemModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Classification
+			 */
+			severity: enumField(["minor", "major", "fatal"]),
 
-			{
-				severity: new fields.StringField({
-					initial: "",
-				}),
+			type: textField(),
 
-				incubation: new fields.StringField({
-					initial: "",
-				}),
+			/*
+			 * Progression
+			 */
+			incubation: textField(),
 
-				duration: new fields.StringField({
-					initial: "",
-				}),
+			duration: textField(),
 
-				symptoms: new fields.ArrayField(new fields.StringField()),
-			},
-		);
+			/*
+			 * Mechanics
+			 */
+			test: textField(),
+
+			difficulty: textField(),
+
+			damage: textField(),
+
+			/*
+			 * Symptoms
+			 */
+			symptoms: stringArrayField(),
+
+			/*
+			 * Recovery
+			 */
+			cure: htmlField(),
+
+			immunity: flagField(false),
+
+			/*
+			 * Rules reference
+			 */
+			sourceBook: referenceField(),
+
+			/*
+			 * Disease effects
+			 */
+			effect: htmlField(),
+		});
 	}
 }

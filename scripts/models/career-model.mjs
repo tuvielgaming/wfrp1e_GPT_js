@@ -1,24 +1,61 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	textField,
+	htmlField,
+	enumField,
+	flagField,
+	integerField,
+	stringArrayField,
+} from "./fields.mjs";
 
 export class CareerModel extends WFRPItemModel {
 	static defineSchema() {
 		return foundry.utils.mergeObject(super.defineSchema(), {
-			skillIds: new fields.ArrayField(new fields.StringField()),
-			talentIds: new fields.ArrayField(new fields.StringField()),
-			careerAdvances: new fields.SchemaField({
-				ws: new fields.NumberField({ initial: 0 }),
-				bs: new fields.NumberField({ initial: 0 }),
-				s: new fields.NumberField({ initial: 0 }),
-				t: new fields.NumberField({ initial: 0 }),
-				w: new fields.NumberField({ initial: 0 }),
-				a: new fields.NumberField({ initial: 0 }),
-				ag: new fields.NumberField({ initial: 0 }),
-				int: new fields.NumberField({ initial: 0 }),
-				wp: new fields.NumberField({ initial: 0 }),
-				fel: new fields.NumberField({ initial: 0 }),
-			}),
+			/*
+			 * Classification
+			 */
+			class: textField(),
+
+			careerLevel: integerField(1, 1),
+
+			status: enumField(["brass", "silver", "gold"]),
+
+			statusLevel: integerField(0, 0),
+
+			/*
+			 * Career progression
+			 */
+			previousCareer: textField(),
+
+			nextCareers: stringArrayField(),
+
+			/*
+			 * Advances
+			 */
+			characteristics: stringArrayField(),
+
+			skills: stringArrayField(),
+
+			talents: stringArrayField(),
+
+			trappings: stringArrayField(),
+
+			/*
+			 * Career options
+			 */
+			exits: stringArrayField(),
+
+			complete: flagField(false),
+
+			/*
+			 * Rules
+			 */
+			specialRules: stringArrayField(),
+
+			/*
+			 * Description
+			 */
+			effect: htmlField(),
 		});
 	}
 }

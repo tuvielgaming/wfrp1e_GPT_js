@@ -1,21 +1,58 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	textField,
+	htmlField,
+	enumField,
+	flagField,
+	integerField,
+	stringArrayField,
+	referenceField,
+	modifierField,
+} from "./fields.mjs";
 
 export class MutationModel extends WFRPItemModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Classification
+			 */
+			severity: enumField(["minor", "major", "chaos"]),
 
-			{
-				severity: new fields.StringField({
-					initial: "minor",
-				}),
+			source: enumField(["chaos", "divine", "magical", "other"]),
 
-				source: new fields.StringField({
-					initial: "chaos",
-				}),
-			},
-		);
+			type: textField(),
+
+			/*
+			 * Visibility
+			 */
+			visible: flagField(true),
+
+			hidden: flagField(false),
+
+			/*
+			 * Mechanical effects
+			 */
+			insanityGain: integerField(0, 0),
+
+			corruptionValue: integerField(0, 0),
+
+			modifier: modifierField(),
+
+			/*
+			 * Rules
+			 */
+			effect: htmlField(),
+
+			gameEffects: stringArrayField(),
+
+			/*
+			 * Story
+			 */
+			cause: textField(),
+
+			cure: htmlField(),
+
+			sourceBook: referenceField(),
+		});
 	}
 }

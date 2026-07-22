@@ -1,53 +1,106 @@
-export async function buySkill(actor, skillUuid) {
-	const source = await fromUuid(skillUuid);
+/**
+ * ============================================================================
+ * WFRP1e Foundry VTT System
+ * Skill Service
+ * ----------------------------------------------------------------------------
+ * Responsible for preparing derived skill data.
+ *
+ * This service performs no roll logic.
+ * It prepares skill information for character sheets and future roll services.
+ * ============================================================================
+ */
 
-	if (!source) return false;
+export class SkillService {
+	/**
+	 * Prepare derived skill data.
+	 *
+	 * @param {WFRPActor} actor
+	 */
+	static prepare(actor) {
+		const skills = actor.items.filter((item) => item.type === "skill");
 
-	const owned = actor.items.some(
-		(item) => item.system.sourceId === source.uuid,
-	);
+		actor.system.derived ??= {};
 
-	if (owned) {
-		ui.notifications.warn("Skill already owned.");
-
-		return false;
+		actor.system.derived.skills = skills.map((skill) =>
+			this.prepareSkill(actor, skill),
+		);
 	}
 
-	const cost = source.system.advanceCost;
+	/**
+	 * Prepare a single skill.
+	 *
+	 * @param {WFRPActor} actor
+	 * @param {Item} skill
+	 *
+	 * @returns {object}
+	 */
+	static prepareSkill(actor, skill) {
+		const characteristicId = skill.system.characteristic;
 
-	const xp = actor.system.resources.experience;
+		const characteristic =
+			actor.system.derived?.characteristics?.[characteristicId];
 
-	if (xp.current < cost) {
-		ui.notifications.warn("Not enough experience.");
+		const characteristicValue = characteristic?.current ?? 0;
 
-		return false;
+		const advances = skill.system.advances ?? 0;
+
+		const modifier = skill.system.modifier ?? 0;
+
+		const total = characteristicValue + advances + modifier;
+
+		return {
+			id: skill.id,
+
+			uuid: skill.uuid,
+
+			name: skill.name,
+
+			type: skill.system.type,
+
+			category: skill.system.category,
+
+			characteristic: characteristicId,
+
+			characteristicValue,
+
+			advances,
+
+			modifier,
+
+			total,
+
+			grouped: skill.system.grouped,
+
+			group: skill.system.group,
+
+			specialisations: skill.system.specialisations,
+		};
 	}
 
-	await actor.createEmbeddedDocuments(
-		"Item",
+	/**
+	 * Returns all owned skills.
+	 *
+	 * @param {WFRPActor} actor
+	 *
+	 * @returns {Item[]}
+	 */
+	static getSkills(actor) {
+		return actor.items.filter((item) => item.type === "skill");
+	}
 
-		[
-			{
-				name: source.name,
-
-				type: "skill",
-
-				system: {
-					sourceId: source.uuid,
-
-					boughtAdvances: 1,
-				},
-
-				effects: source.effects.map((e) => e.toObject()),
-			},
-		],
-	);
-
-	await actor.update({
-		"system.resources.experience.current": xp.current - cost,
-
-		"system.resources.experience.spent": xp.spent + cost,
-	});
-
-	return true;
+	/**
+	 * Returns a skill by id or name.
+	 *
+	 * @param {WFRPActor} actor
+	 * @param {string} identifier
+	 *
+	 * @returns {Item|null}
+	 */
+	static getSkill(actor, identifier) {
+		return (
+			this.getSkills(actor).find(
+				(skill) => skill.id === identifier || skill.name === identifier,
+			) ?? null
+		);
+	}
 }

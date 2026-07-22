@@ -1,25 +1,51 @@
 import { WFRPItemModel } from "./item-model.mjs";
-
-const fields = foundry.data.fields;
+import {
+	htmlField,
+	textField,
+	bodyLocationField,
+	integerField,
+	flagField,
+	stringArrayField,
+	modifierField,
+} from "./fields.mjs";
 
 export class CriticalWoundModel extends WFRPItemModel {
 	static defineSchema() {
-		return foundry.utils.mergeObject(
-			super.defineSchema(),
+		return foundry.utils.mergeObject(super.defineSchema(), {
+			/*
+			 * Injury location
+			 */
+			location: bodyLocationField(),
 
-			{
-				location: new fields.StringField({
-					initial: "",
-				}),
+			/*
+			 * Severity
+			 */
+			severity: integerField(1, 1),
 
-				severity: new fields.NumberField({
-					initial: 0,
-				}),
+			permanent: flagField(false),
 
-				healed: new fields.BooleanField({
-					initial: false,
-				}),
-			},
-		);
+			healed: flagField(false),
+
+			/*
+			 * Recovery
+			 */
+			healingTestModifier: modifierField(),
+
+			healingDays: integerField(0, 0),
+
+			/*
+			 * Rules
+			 */
+			effect: htmlField(),
+
+			gameEffects: stringArrayField(),
+
+			/*
+			 * Story
+			 */
+			cause: textField(),
+
+			notes: htmlField(),
+		});
 	}
 }
